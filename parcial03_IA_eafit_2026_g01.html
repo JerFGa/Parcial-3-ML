@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcial 03 — IA EAFIT 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f5f0e8;
+  --ink: #1a1510;
+  --ink2: #3a3228;
+  --ink3: #6b5f52;
+  --red: #c0392b;
+  --blue: #1a4a7a;
+  --green: #1a5c3a;
+  --orange: #c05a0a;
+  --gold: #9a7a1a;
+  --border: #c8b89a;
+  --surface: #ede8de;
+  --surface2: #e2dcd0;
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'DM Serif Display', serif;
+  --sans: 'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ── WATERMARK ── */
+body::before {
+  content: 'EAFIT IA 2026';
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%,-50%) rotate(-35deg);
+  font-family: var(--serif); font-size: 120px; font-weight: 400;
+  color: rgba(160,130,90,0.06);
+  white-space: nowrap; pointer-events: none; z-index: 0; user-select: none;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 48px 32px 120px; }
+
+/* ── HEADER ── */
+.exam-header {
+  border-top: 4px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  padding: 32px 0 28px;
+  margin-bottom: 36px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: start;
+}
+.exam-header-left h1 {
+  font-family: var(--serif); font-size: 38px; line-height: 1.1;
+  letter-spacing: -0.01em; margin-bottom: 6px;
+}
+.exam-header-left h1 em { font-style: italic; color: var(--blue); }
+.exam-header-left .subtitle {
+  font-family: var(--mono); font-size: 11px; color: var(--ink3);
+  text-transform: uppercase; letter-spacing: 0.12em;
+}
+.exam-meta-box {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 18px 24px;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 2;
+  min-width: 240px;
+}
+.exam-meta-box strong { color: #ffcf6b; }
+.exam-meta-box .red-warn { color: #ff7a6b; font-weight: 600; }
+
+/* ── DEADLINE BANNER ── */
+.deadline-banner {
+  background: var(--red);
+  color: #fff;
+  padding: 14px 24px;
+  font-family: var(--mono);
+  font-size: 12px;
+  margin-bottom: 32px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  border-left: 6px solid #800;
+}
+.deadline-banner .dl-title { font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.1em; }
+.deadline-banner .dl-main { font-size: 16px; font-weight: 600; }
+.deadline-banner .dl-rule { font-size: 11px; opacity: 0.9; }
+
+/* ── INSTRUCTIONS BOX ── */
+.instr-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--blue);
+  padding: 22px 26px;
+  margin-bottom: 40px;
+  font-size: 14px;
+}
+.instr-box h3 { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--blue); margin-bottom: 14px; }
+.instr-box ol { padding-left: 20px; }
+.instr-box li { margin-bottom: 8px; }
+.instr-box li strong { color: var(--ink); font-weight: 600; }
+.instr-box .warn { color: var(--red); font-weight: 500; }
+.nb-template {
+  background: var(--ink); color: #c8d8e8;
+  font-family: var(--mono); font-size: 11.5px; line-height: 1.9;
+  padding: 16px 20px; margin-top: 14px; border-radius: 2px; overflow-x: auto;
+}
+.nb-template .kw { color: #ff9f7a; } .nb-template .str { color: #b5e5a0; } .nb-template .cm { color: #667788; }
+
+/* ── SECTION DIVIDER ── */
+.section-divider {
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 16px;
+  margin: 48px 0 28px;
+}
+.section-divider .sd-label {
+  font-family: var(--serif); font-size: 22px; color: var(--ink);
+  white-space: nowrap;
+}
+.section-divider .sd-line { height: 1px; background: var(--border); }
+.section-divider .sd-pts {
+  font-family: var(--mono); font-size: 11px; color: var(--ink3);
+  white-space: nowrap;
+}
+
+/* ── QUESTION BLOCK ── */
+.q-block {
+  border: 1px solid var(--border);
+  background: #fff;
+  margin-bottom: 32px;
+  page-break-inside: avoid;
+}
+.q-header {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+}
+.q-num {
+  font-family: var(--serif); font-size: 20px; color: var(--ink);
+  white-space: nowrap;
+}
+.q-title { font-family: var(--sans); font-weight: 600; font-size: 15px; flex: 1; }
+.q-pts {
+  font-family: var(--mono); font-size: 11px;
+  background: var(--ink); color: var(--paper);
+  padding: 2px 10px; white-space: nowrap;
+}
+.q-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 8px; border: 1px solid; }
+.tag-diag { border-color: var(--blue); color: var(--blue); }
+.tag-reason { border-color: var(--green); color: var(--green); }
+.tag-design { border-color: var(--orange); color: var(--orange); }
+.tag-code { border-color: var(--red); color: var(--red); }
+.tag-draw { border-color: var(--gold); color: var(--gold); }
+
+.q-body { padding: 22px 24px; font-size: 14.5px; }
+.q-body p { margin-bottom: 14px; }
+.q-body p:last-child { margin-bottom: 0; }
+.q-body strong { font-weight: 600; color: var(--ink); }
+.q-body em { font-style: italic; color: var(--ink2); }
+
+/* ── SCENARIO BOX ── */
+.scenario {
+  background: #f0f4fa;
+  border-left: 3px solid var(--blue);
+  padding: 16px 18px;
+  margin: 16px 0;
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.scenario .sc-label {
+  font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--blue); margin-bottom: 8px; display: block;
+}
+
+/* ── FIGURE / CHART CONTAINER ── */
+.fig-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin: 18px 0;
+}
+.fig-caption {
+  font-family: var(--mono); font-size: 11px; color: var(--ink3);
+  margin-top: 10px; text-align: center; letter-spacing: 0.04em;
+}
+
+/* ── METRICS TABLE ── */
+.metrics-table {
+  width: 100%; border-collapse: collapse;
+  font-family: var(--mono); font-size: 12.5px;
+  margin: 16px 0;
+}
+.metrics-table th {
+  background: var(--ink); color: var(--paper);
+  padding: 8px 12px; text-align: left; font-weight: 600;
+  letter-spacing: 0.06em; font-size: 11px;
+}
+.metrics-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+.metrics-table tr:nth-child(even) td { background: var(--surface); }
+.metrics-table .bad { color: var(--red); font-weight: 600; }
+.metrics-table .good { color: var(--green); font-weight: 600; }
+.metrics-table .warn { color: var(--orange); font-weight: 600; }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #1a1a2e; color: #c8d8f0;
+  font-family: var(--mono); font-size: 12px; line-height: 1.85;
+  padding: 18px 22px; margin: 14px 0; overflow-x: auto;
+  border-left: 3px solid var(--red);
+}
+.code-block .kw  { color: #ff79c6; }
+.code-block .str { color: #f1fa8c; }
+.code-block .cm  { color: #6272a4; font-style: italic; }
+.code-block .fn  { color: #8be9fd; }
+.code-block .nb  { color: #bd93f9; }
+.code-block .num { color: #ffb86c; }
+.code-block .err { color: #ff5555; text-decoration: underline wavy; }
+
+/* ── DRAW BOX ── */
+.draw-box {
+  border: 2px dashed var(--gold);
+  background: #fffef5;
+  padding: 20px;
+  margin: 16px 0;
+  min-height: 200px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px;
+}
+.draw-box .draw-icon { font-size: 32px; opacity: 0.4; }
+.draw-box .draw-label {
+  font-family: var(--mono); font-size: 11px; color: var(--gold);
+  text-transform: uppercase; letter-spacing: 0.1em; text-align: center;
+}
+.draw-box .draw-sub { font-size: 12.5px; color: var(--ink3); text-align: center; max-width: 400px; }
+
+/* ── SUBQUESTIONS ── */
+.subqs { margin-top: 18px; }
+.subq { margin-bottom: 16px; padding-left: 20px; border-left: 2px solid var(--border); }
+.subq-label { font-family: var(--mono); font-size: 11px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.subq p { font-size: 14px; }
+.subq .pts-inline { font-family: var(--mono); font-size: 10px; color: var(--ink3); }
+
+/* ── EQUATION ── */
+.eq { font-family: var(--mono); background: var(--surface); border: 1px solid var(--border); padding: 10px 18px; margin: 10px 0; text-align: center; font-size: 13px; color: var(--ink2); }
+
+/* ── CONFUSION MATRIX ── */
+.cm-grid { display: inline-grid; grid-template-columns: auto auto auto auto; gap: 2px; margin: 10px 0; }
+.cm-cell { width: 72px; height: 56px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 13px; font-weight: 600; }
+.cm-header { background: var(--ink2); color: var(--paper); font-size: 10px; font-weight: 400; letter-spacing: 0.06em; }
+.cm-tp { background: #d4edda; color: #155724; }
+.cm-tn { background: #d4edda; color: #155724; }
+.cm-fp { background: #f8d7da; color: #721c24; }
+.cm-fn { background: #fff3cd; color: #856404; }
+.cm-corner { background: transparent; }
+
+/* ── TIMER ── */
+.timer-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 4px; background: var(--border); }
+#timer-fill { height: 100%; width: 100%; background: var(--blue); transition: width 1s linear; }
+.timer-widget {
+  position: fixed; bottom: 28px; right: 28px; z-index: 101;
+  background: var(--ink); color: var(--paper);
+  border-radius: 2px; padding: 10px 18px;
+  font-family: var(--mono); font-size: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  display: flex; align-items: center; gap: 10px;
+}
+.timer-widget.warn  { background: #7a4a00; }
+.timer-widget.danger { background: var(--red); animation: pulse 0.8s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.75} }
+
+/* ── FOOTER ── */
+.exam-footer {
+  margin-top: 60px;
+  border-top: 2px solid var(--ink);
+  padding-top: 20px;
+  display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;
+  font-family: var(--mono); font-size: 11px; color: var(--ink3);
+}
+
+/* ── HIGHLIGHT ── */
+.hl-red { background: #ffeaea; border: 1px solid #f5c6cb; padding: 2px 6px; color: var(--red); font-weight: 500; }
+.hl-blue { background: #e8f0fa; border: 1px solid #b8d0f0; padding: 2px 6px; color: var(--blue); font-weight: 500; }
+
+@media(max-width:640px){
+  .exam-header { grid-template-columns: 1fr; }
+  .exam-header-left h1 { font-size: 28px; }
+  .q-body { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="timer-bar"><div id="timer-fill"></div></div>
+<div class="timer-widget" id="timer-widget">⏱ <span id="timer-display">02:30:00</span></div>
+
+<div class="wrap">
+
+<!-- ══════════ HEADER ══════════ -->
+<header class="exam-header">
+  <div class="exam-header-left">
+    <div class="subtitle">Universidad EAFIT · Ingeniería de Sistemas · 2026-1</div>
+    <h1>Parcial 03<br><em>Inteligencia Artificial</em></h1>
+    <div class="subtitle" style="margin-top:10px;">Diagnóstico · Razonamiento · Diseño · Código · Síntesis</div>
+  </div>
+  <div class="exam-meta-box">
+    <div>Docente: <strong>Jorge Iván Padilla B.</strong></div>
+    <div>Correo: <strong>jipadillab@eafit.edu.co</strong></div>
+    <div>Duración: <strong>2 horas 30 minutos</strong></div>
+    <div>Valor: <strong>5 secciones · 100 pts</strong></div>
+    <div>Modalidad: <strong>Remoto · Grupos ≤ 3</strong></div>
+    <div class="red-warn">⚠ Hora límite: 11:30 AM · 29 abr 2026</div>
+  </div>
+</header>
+
+<!-- DEADLINE BANNER -->
+<div class="deadline-banner">
+  <div>
+    <div class="dl-title">Penalización por entrega tardía</div>
+    <div class="dl-main">Máximo: 11:30 AM del 29 de abril de 2026</div>
+  </div>
+  <div class="dl-rule">−1 punto por cada minuto de retraso · Ej: 11:52 AM → nota máx. posible = 3.0</div>
+</div>
+
+<!-- INSTRUCCIONES -->
+<div class="instr-box">
+  <h3>📋 Instrucciones generales</h3>
+  <ol>
+    <li><strong>Entrega individual por integrante:</strong> cada miembro del grupo envía su propio correo a <em>jipadillab@eafit.edu.co</em> con el notebook adjunto. Asunto: <code>P03-IA · [ID] · Grupo [Mié/Jue/Vie]</code>.</li>
+    <li><strong>Portada del notebook:</strong> primera celda Markdown con nombres completos, IDs y grupo de todos los integrantes.</li>
+    <li><strong>Punto de gráfica a mano (Sección D):</strong> fotografía o escaneo de buena calidad, embebida en el notebook como imagen. Debe verse claramente etiquetada.</li>
+    <li><strong>Argumentación propia:</strong> las respuestas deben ser situadas en el contexto específico dado. Respuestas genéricas extraídas de definiciones estándar <span class="warn">no recibirán puntaje</span>.</li>
+    <li><strong>Cada sección indica su puntaje.</strong> Distribúyelo según las subpreguntas.</li>
+    <li>No se aceptan entregas por WhatsApp ni por el chat de Teams. Solo correo electrónico.</li>
+  </ol>
+  <div class="nb-template">
+<span class="cm"># ── PORTADA (Celda Markdown obligatoria) ──────────────────────</span><br>
+<span class="kw">**Parcial 03 — Inteligencia Artificial · EAFIT 2026**</span><br><br>
+<span class="kw">| Campo | Integrante 1 | Integrante 2 | Integrante 3 |</span><br>
+<span class="kw">|---|---|---|---|</span><br>
+<span class="str">| Nombre completo | | | |</span><br>
+<span class="str">| ID EAFIT | | | |</span><br>
+<span class="str">| Grupo (Mié/Jue/Vie) | | | |</span><br><br>
+<span class="cm">Fecha de entrega: ____  Hora: ____</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!--   SECCIÓN A — DIAGNÓSTICO SITUADO  (20 pts)          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <span class="sd-label">Sección A — Diagnóstico Situado</span>
+  <span class="sd-line"></span>
+  <span class="sd-pts">20 puntos</span>
+</div>
+
+<div class="q-block">
+  <div class="q-header">
+    <span class="q-num">A.1</span>
+    <span class="q-title">Autopsia de un clasificador médico de neumonía</span>
+    <span class="q-pts">20 pts</span>
+    <div class="q-tags">
+      <span class="tag tag-diag">Diagnóstico</span>
+      <span class="tag tag-reason">Razonamiento</span>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="scenario">
+      <span class="sc-label">🏥 Escenario</span>
+      Un hospital en Medellín entrenó un modelo de CNN para clasificar radiografías de tórax en tres clases: <strong>NORMAL</strong>, <strong>NEUMONÍA BACTERIANA</strong> y <strong>NEUMONÍA VIRAL</strong>. El dataset tiene 4.800 imágenes de entrenamiento y 960 de validación. El equipo reporta los siguientes resultados tras 40 épocas de entrenamiento con MobileNetV2 fine-tuned.
+    </div>
+
+    <!-- CURVAS DE APRENDIZAJE SVG -->
+    <div class="fig-wrap">
+      <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+        <!-- Axes -->
+        <line x1="60" y1="20" x2="60" y2="260" stroke="#444" stroke-width="1.5"/>
+        <line x1="60" y1="260" x2="680" y2="260" stroke="#444" stroke-width="1.5"/>
+        <!-- Y gridlines -->
+        <line x1="60" y1="60" x2="680" y2="60" stroke="#ccc" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <line x1="60" y1="110" x2="680" y2="110" stroke="#ccc" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <line x1="60" y1="160" x2="680" y2="160" stroke="#ccc" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <line x1="60" y1="210" x2="680" y2="210" stroke="#ccc" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <!-- Y labels -->
+        <text x="52" y="63" text-anchor="end" font-family="monospace" font-size="10" fill="#666">1.00</text>
+        <text x="52" y="113" text-anchor="end" font-family="monospace" font-size="10" fill="#666">0.80</text>
+        <text x="52" y="163" text-anchor="end" font-family="monospace" font-size="10" fill="#666">0.60</text>
+        <text x="52" y="213" text-anchor="end" font-family="monospace" font-size="10" fill="#666">0.40</text>
+        <text x="52" y="263" text-anchor="end" font-family="monospace" font-size="10" fill="#666">0.20</text>
+        <!-- X labels -->
+        <text x="60"  y="278" text-anchor="middle" font-family="monospace" font-size="10" fill="#666">0</text>
+        <text x="214" y="278" text-anchor="middle" font-family="monospace" font-size="10" fill="#666">10</text>
+        <text x="369" y="278" text-anchor="middle" font-family="monospace" font-size="10" fill="#666">20</text>
+        <text x="524" y="278" text-anchor="middle" font-family="monospace" font-size="10" fill="#666">30</text>
+        <text x="678" y="278" text-anchor="middle" font-family="monospace" font-size="10" fill="#666">40</text>
+        <!-- Axis labels -->
+        <text x="370" y="295" text-anchor="middle" font-family="monospace" font-size="11" fill="#444">Época</text>
+        <text x="14" y="150" text-anchor="middle" font-family="monospace" font-size="11" fill="#444" transform="rotate(-90,14,150)">Accuracy</text>
+
+        <!-- Train accuracy: sube rápido, llega a 0.97 en época 15, luego 0.99 -->
+        <polyline fill="none" stroke="#1a4a7a" stroke-width="2.5"
+          points="60,230 75,195 90,175 106,158 122,145 137,136 153,126 168,118 184,110 200,104 215,98 231,92 246,86 262,82 277,78 293,75 308,72 324,70 339,68 355,66 370,65 386,64 401,63 417,62 432,62 448,62 463,62 479,62 494,61 510,61 525,61 541,61 556,61 572,61 587,61 603,61 618,61 634,60 649,60 665,60"/>
+
+        <!-- Val accuracy: sube hasta 0.84 en época 12, luego oscila bajando -->
+        <polyline fill="none" stroke="#1a4a7a" stroke-width="2.5" stroke-dasharray="8,4" opacity="0.7"
+          points="60,238 75,210 90,190 106,175 122,164 137,156 153,148 168,141 184,136 200,131 215,127 231,128 246,129 262,131 277,133 293,136 308,139 324,142 339,146 355,149 370,152 386,155 401,158 417,161 432,164 448,165 463,167 479,169 494,170 510,172 525,173 541,174 556,175 572,175 587,176 603,177 618,178 634,178 649,179 665,180"/>
+
+        <!-- Legend -->
+        <line x1="480" y1="35" x2="510" y2="35" stroke="#1a4a7a" stroke-width="2.5"/>
+        <text x="515" y="39" font-family="monospace" font-size="11" fill="#333">Train acc</text>
+        <line x1="480" y1="55" x2="510" y2="55" stroke="#1a4a7a" stroke-width="2.5" stroke-dasharray="6,3" opacity="0.7"/>
+        <text x="515" y="59" font-family="monospace" font-size="11" fill="#333">Val acc</text>
+      </svg>
+      <div class="fig-caption">Figura A.1 — Curvas de accuracy: entrenamiento vs. validación (40 épocas)</div>
+    </div>
+
+    <!-- LOSS CURVES -->
+    <div class="fig-wrap">
+      <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+        <line x1="60" y1="20" x2="60" y2="240" stroke="#444" stroke-width="1.5"/>
+        <line x1="60" y1="240" x2="680" y2="240" stroke="#444" stroke-width="1.5"/>
+        <line x1="60" y1="60" x2="680" y2="60" stroke="#ccc" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <line x1="60" y1="100" x2="680" y2="100" stroke="#ccc" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <line x1="60" y1="140" x2="680" y2="140" stroke="#ccc" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <line x1="60" y1="180" x2="680" y2="180" stroke="#ccc" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <text x="52" y="63" text-anchor="end" font-family="monospace" font-size="10" fill="#666">2.0</text>
+        <text x="52" y="103" text-anchor="end" font-family="monospace" font-size="10" fill="#666">1.5</text>
+        <text x="52" y="143" text-anchor="end" font-family="monospace" font-size="10" fill="#666">1.0</text>
+        <text x="52" y="183" text-anchor="end" font-family="monospace" font-size="10" fill="#666">0.5</text>
+        <text x="52" y="243" text-anchor="end" font-family="monospace" font-size="10" fill="#666">0.0</text>
+        <text x="60"  y="258" text-anchor="middle" font-family="monospace" font-size="10" fill="#666">0</text>
+        <text x="214" y="258" text-anchor="middle" font-family="monospace" font-size="10" fill="#666">10</text>
+        <text x="369" y="258" text-anchor="middle" font-family="monospace" font-size="10" fill="#666">20</text>
+        <text x="524" y="258" text-anchor="middle" font-family="monospace" font-size="10" fill="#666">30</text>
+        <text x="678" y="258" text-anchor="middle" font-family="monospace" font-size="10" fill="#666">40</text>
+        <text x="370" y="272" text-anchor="middle" font-family="monospace" font-size="11" fill="#444">Época</text>
+        <text x="14" y="140" text-anchor="middle" font-family="monospace" font-size="11" fill="#444" transform="rotate(-90,14,140)">Loss</text>
+        <!-- Train loss: baja de 1.9 a 0.04 -->
+        <polyline fill="none" stroke="#c0392b" stroke-width="2.5"
+          points="60,40 75,65 90,88 106,108 122,124 137,136 153,146 168,153 184,159 200,163 215,167 231,170 246,173 262,175 277,177 293,178 308,180 324,181 339,182 355,183 370,184 386,184 401,185 417,185 432,186 448,186 463,186 479,187 494,187 510,187 525,188 541,188 556,188 572,188 587,189 603,189 618,189 634,189 649,189 665,190"/>
+        <!-- Val loss: baja hasta e12 luego sube -->
+        <polyline fill="none" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="8,4" opacity="0.7"
+          points="60,44 75,68 90,90 106,110 122,126 137,136 153,144 168,149 184,152 200,154 215,155 231,154 246,153 262,152 277,150 293,149 308,148 324,147 339,146 355,145 370,144 386,143 401,143 417,142 432,141 448,141 463,140 479,140 494,139 510,139 525,139 541,139 556,139 572,139 587,139 603,139 618,139 634,139 649,139 665,138"/>
+        <line x1="480" y1="30" x2="510" y2="30" stroke="#c0392b" stroke-width="2.5"/>
+        <text x="515" y="34" font-family="monospace" font-size="11" fill="#333">Train loss</text>
+        <line x1="480" y1="50" x2="510" y2="50" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="6,3" opacity="0.7"/>
+        <text x="515" y="54" font-family="monospace" font-size="11" fill="#333">Val loss</text>
+      </svg>
+      <div class="fig-caption">Figura A.2 — Curvas de pérdida (Categorical Cross-Entropy): entrenamiento vs. validación</div>
+    </div>
+
+    <!-- CONFUSION MATRIX -->
+    <div class="fig-wrap" style="overflow-x:auto;">
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Matriz de Confusión — Conjunto de Validación (960 imágenes)</div>
+        <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;justify-content:center;">
+          <div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--ink3);text-align:center;margin-bottom:6px;letter-spacing:0.06em;">PREDICCIÓN →</div>
+            <div class="cm-grid">
+              <div class="cm-cell cm-corner"></div>
+              <div class="cm-cell cm-header" style="font-size:9px;letter-spacing:0.04em;">NORMAL</div>
+              <div class="cm-cell cm-header" style="font-size:9px;letter-spacing:0.04em;">BACT.</div>
+              <div class="cm-cell cm-header" style="font-size:9px;letter-spacing:0.04em;">VIRAL</div>
+
+              <div class="cm-cell cm-header" style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;">NORMAL</div>
+              <div class="cm-cell cm-tp">284</div>
+              <div class="cm-cell cm-fp">36</div>
+              <div class="cm-cell cm-fp">0</div>
+
+              <div class="cm-cell cm-header" style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;">BACT.</div>
+              <div class="cm-cell cm-fn">12</div>
+              <div class="cm-cell cm-tp">268</div>
+              <div class="cm-cell cm-fp">40</div>
+
+              <div class="cm-cell cm-header" style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px;">VIRAL</div>
+              <div class="cm-cell cm-fn">4</div>
+              <div class="cm-cell cm-fn">116</div>
+              <div class="cm-cell cm-tp">200</div>
+            </div>
+          </div>
+          <div style="padding-top:30px;">
+            <table class="metrics-table" style="min-width:320px;">
+              <tr><th>Clase</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr>
+              <tr><td>Normal</td><td class="good">0.94</td><td class="good">0.89</td><td class="good">0.91</td><td>320</td></tr>
+              <tr><td>Neumonía Bact.</td><td class="warn">0.64</td><td class="good">0.84</td><td class="warn">0.73</td><td>320</td></tr>
+              <tr><td>Neumonía Viral</td><td class="good">0.83</td><td class="bad">0.63</td><td class="warn">0.72</td><td>320</td></tr>
+              <tr style="border-top:2px solid #888;"><td><strong>Macro avg</strong></td><td class="warn">0.80</td><td class="warn">0.79</td><td class="warn">0.79</td><td>960</td></tr>
+              <tr><td><strong>Accuracy</strong></td><td colspan="3" class="warn" style="text-align:center;">0.783</td><td>960</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="fig-caption">Figura A.3 — Matriz de confusión y métricas por clase (época 40)</div>
+    </div>
+
+    <div class="subqs">
+      <div class="subq">
+        <div class="subq-label">A.1.a — 5 pts</div>
+        <p>Las curvas de la Figura A.1 muestran un patrón específico. <strong>Identifica con precisión qué fenómeno de entrenamiento está ocurriendo, a partir de qué época aproximada se manifiesta, y cuál es la causa más probable dado el contexto del problema</strong> (dataset médico, MobileNetV2, 3 clases). No te limites a nombrar el fenómeno: explica por qué ocurre en <em>este</em> caso.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">A.1.b — 7 pts</div>
+        <p>Analiza la matriz de confusión (Figura A.3). El hospital usará este modelo para <strong>triaje de emergencia</strong>: si el modelo clasifica a un paciente como "Normal" cuando en realidad tiene neumonía bacteriana, el paciente puede irse a casa sin tratamiento. Con base en las métricas reales de la tabla, <strong>¿es este modelo clínicamente aceptable para ese uso? Justifica numéricamente</strong> usando al menos dos métricas específicas y explica qué tipo de error es más costoso en este dominio.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">A.1.c — 8 pts</div>
+        <p>El equipo propone como solución al bajo rendimiento en la clase "Viral" simplemente <em>entrenar más épocas</em>. <strong>Argumenta por qué esta solución probablemente no funcionará</strong> (apóyate en las dos figuras de curvas), y propón <strong>tres intervenciones técnicas concretas y distintas</strong> que el equipo debería implementar, ordenadas por tu criterio de impacto esperado. Para cada una, explica el mecanismo por el que mejoraría <em>específicamente</em> el recall de la clase Viral.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!--   SECCIÓN B — RAZONAMIENTO DE TRADE-OFFS  (22 pts)   -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <span class="sd-label">Sección B — Razonamiento de Trade-offs</span>
+  <span class="sd-line"></span>
+  <span class="sd-pts">22 puntos</span>
+</div>
+
+<div class="q-block">
+  <div class="q-header">
+    <span class="q-num">B.1</span>
+    <span class="q-title">Diseño bajo restricciones reales — Sistema de detección de fraude financiero</span>
+    <span class="q-pts">12 pts</span>
+    <div class="q-tags">
+      <span class="tag tag-design">Diseño</span>
+      <span class="tag tag-reason">Razonamiento</span>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="scenario">
+      <span class="sc-label">🏦 Escenario</span>
+      Una fintech colombiana de pagos digitales (50.000 transacciones/día) quiere detectar fraude en tiempo real. El equipo de datos tiene 18 meses de historial transaccional: <strong>de 5.4 millones de transacciones, solo 1.890 son fraude confirmado (0.035%)</strong>. El sistema debe dar respuesta en menos de 200ms por transacción. El equipo tiene 3 data scientists, sin GPU dedicada en producción. El negocio acepta bloquear hasta un 0.5% de transacciones legítimas (falsos positivos), pero exige que <strong>no se pierda más del 15% del fraude real</strong> (falsos negativos ≤ 15%).
+    </div>
+
+    <div class="subqs">
+      <div class="subq">
+        <div class="subq-label">B.1.a — 4 pts</div>
+        <p>Calcula manualmente el <strong>número esperado de instancias fraudulentas por día</strong> y el <strong>ratio de desbalance de clases</strong>. Luego explica por qué en este contexto la accuracy <em>no es una métrica útil</em> y qué métricas sí deberías usar como objetivo de optimización. Muestra los cálculos.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">B.1.b — 5 pts</div>
+        <p>Propón un <strong>pipeline de ML completo y justificado</strong> para este problema, desde el preprocesamiento hasta la decisión final. Debes resolver explícitamente: (1) cómo tratar el desbalance, (2) qué familia de modelo elegirías dado el constraint de latencia y por qué, (3) qué umbral de decisión (threshold) usarías y cómo lo calibrarías para cumplir el requerimiento del negocio (≤15% FN). No es suficiente mencionar técnicas: explica el <em>por qué</em> de cada elección.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">B.1.c — 3 pts</div>
+        <p>El modelo entra en producción y a los 30 días empieza a degradarse: el recall de fraude cae del 88% al 71% sin que los ingenieros hayan cambiado nada. <strong>¿Qué fenómeno es este? ¿Por qué ocurre específicamente en fraude financiero? Propón dos mecanismos de monitoreo</strong> que permitirían detectarlo temprano, antes de que el cliente lo note.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="q-block">
+  <div class="q-header">
+    <span class="q-num">B.2</span>
+    <span class="q-title">Kernels, feature maps y el flujo de información en una CNN — Razonamiento profundo</span>
+    <span class="q-pts">10 pts</span>
+    <div class="q-tags">
+      <span class="tag tag-diag">Diagnóstico</span>
+      <span class="tag tag-reason">Razonamiento</span>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="scenario">
+      <span class="sc-label">🔬 Escenario</span>
+      El equipo del hospital de la Sección A tiene acceso a los feature maps intermedios de su MobileNetV2. Al visualizar los feature maps de la capa convolucional 12 (de 32 canales, aplicada sobre un feature map de entrada de 28×28) y de la capa convolucional 28 (de 96 canales, 7×7), observan los patrones descritos en la tabla y figuras siguientes.
+    </div>
+
+    <!-- FEATURE MAP STATS TABLE -->
+    <table class="metrics-table">
+      <tr>
+        <th>Capa</th>
+        <th>Filtros activos (>0.1 activación media)</th>
+        <th>Filtros "muertos" (activación ≈ 0)</th>
+        <th>Patrón visual predominante</th>
+        <th>Receptive field acumulado</th>
+      </tr>
+      <tr>
+        <td>Conv 12 (28×28, 32ch)</td>
+        <td class="good">31 / 32</td>
+        <td class="good">1 / 32</td>
+        <td>Bordes, texturas de baja frecuencia</td>
+        <td>15×15 px</td>
+      </tr>
+      <tr>
+        <td>Conv 28 (7×7, 96ch)</td>
+        <td class="bad">41 / 96</td>
+        <td class="bad">55 / 96</td>
+        <td>Manchas difusas, algunos responden a opacidades pulmonares</td>
+        <td>187×187 px</td>
+      </tr>
+    </table>
+
+    <!-- KERNEL VISUALIZATION SVG -->
+    <div class="fig-wrap">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">Figura B.2 — Cuatro kernels 3×3 aprendidos en la capa Conv 12 (valores normalizados −1 a +1)</div>
+      <svg viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:680px;display:block;margin:0 auto;">
+        <!-- Helper: each kernel is a 3x3 grid of colored cells -->
+        <!-- KERNEL 1 — Sobel-like horizontal edge -->
+        <text x="30" y="14" font-family="monospace" font-size="10" fill="#666" text-anchor="middle">Kernel α</text>
+        <rect x="6"  y="20" width="22" height="22" fill="#1a4a7a"/><text x="17"  y="35" font-size="9" font-family="monospace" fill="white" text-anchor="middle">-1</text>
+        <rect x="30" y="20" width="22" height="22" fill="#2a6aaa"/><text x="41"  y="35" font-size="9" font-family="monospace" fill="white" text-anchor="middle">-2</text>
+        <rect x="54" y="20" width="22" height="22" fill="#1a4a7a"/><text x="65"  y="35" font-size="9" font-family="monospace" fill="white" text-anchor="middle">-1</text>
+        <rect x="6"  y="44" width="22" height="22" fill="#e8e0d0"/><text x="17"  y="59" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">0</text>
+        <rect x="30" y="44" width="22" height="22" fill="#e8e0d0"/><text x="41"  y="59" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">0</text>
+        <rect x="54" y="44" width="22" height="22" fill="#e8e0d0"/><text x="65"  y="59" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">0</text>
+        <rect x="6"  y="68" width="22" height="22" fill="#8b1a1a"/><text x="17"  y="83" font-size="9" font-family="monospace" fill="white" text-anchor="middle">+1</text>
+        <rect x="30" y="68" width="22" height="22" fill="#c0392b"/><text x="41"  y="83" font-size="9" font-family="monospace" fill="white" text-anchor="middle">+2</text>
+        <rect x="54" y="68" width="22" height="22" fill="#8b1a1a"/><text x="65"  y="83" font-size="9" font-family="monospace" fill="white" text-anchor="middle">+1</text>
+        <text x="38" y="108" font-family="monospace" font-size="9" fill="#555" text-anchor="middle">"bordes horiz."</text>
+
+        <!-- KERNEL 2 — Gaussian blur -->
+        <text x="200" y="14" font-family="monospace" font-size="10" fill="#666" text-anchor="middle">Kernel β</text>
+        <rect x="176" y="20" width="22" height="22" fill="#c8d8c0"/><text x="187" y="35" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">.06</text>
+        <rect x="200" y="20" width="22" height="22" fill="#a0c890"/><text x="211" y="35" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">.13</text>
+        <rect x="224" y="20" width="22" height="22" fill="#c8d8c0"/><text x="235" y="35" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">.06</text>
+        <rect x="176" y="44" width="22" height="22" fill="#a0c890"/><text x="187" y="59" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">.13</text>
+        <rect x="200" y="44" width="22" height="22" fill="#2a7a2a"/><text x="211" y="59" font-size="9" font-family="monospace" fill="white" text-anchor="middle">.25</text>
+        <rect x="224" y="44" width="22" height="22" fill="#a0c890"/><text x="235" y="59" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">.13</text>
+        <rect x="176" y="68" width="22" height="22" fill="#c8d8c0"/><text x="187" y="83" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">.06</text>
+        <rect x="200" y="68" width="22" height="22" fill="#a0c890"/><text x="211" y="83" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">.13</text>
+        <rect x="224" y="68" width="22" height="22" fill="#c8d8c0"/><text x="235" y="83" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">.06</text>
+        <text x="208" y="108" font-family="monospace" font-size="9" fill="#555" text-anchor="middle">"suavizado"</text>
+
+        <!-- KERNEL 3 — Dead kernel (all near zero) -->
+        <text x="370" y="14" font-family="monospace" font-size="10" fill="#c0392b" text-anchor="middle">Kernel γ  ⚠</text>
+        <rect x="346" y="20" width="22" height="22" fill="#f0ece4"/><text x="357" y="35" font-size="9" font-family="monospace" fill="#aaa" text-anchor="middle">.001</text>
+        <rect x="370" y="20" width="22" height="22" fill="#ede8de"/><text x="381" y="35" font-size="9" font-family="monospace" fill="#aaa" text-anchor="middle">.000</text>
+        <rect x="394" y="20" width="22" height="22" fill="#f0ece4"/><text x="405" y="35" font-size="9" font-family="monospace" fill="#aaa" text-anchor="middle">.001</text>
+        <rect x="346" y="44" width="22" height="22" fill="#ede8de"/><text x="357" y="59" font-size="9" font-family="monospace" fill="#aaa" text-anchor="middle">.000</text>
+        <rect x="370" y="44" width="22" height="22" fill="#ede8de"/><text x="381" y="59" font-size="9" font-family="monospace" fill="#aaa" text-anchor="middle">.000</text>
+        <rect x="394" y="44" width="22" height="22" fill="#ede8de"/><text x="405" y="59" font-size="9" font-family="monospace" fill="#aaa" text-anchor="middle">.000</text>
+        <rect x="346" y="68" width="22" height="22" fill="#f0ece4"/><text x="357" y="83" font-size="9" font-family="monospace" fill="#aaa" text-anchor="middle">.001</text>
+        <rect x="370" y="68" width="22" height="22" fill="#ede8de"/><text x="381" y="83" font-size="9" font-family="monospace" fill="#aaa" text-anchor="middle">.000</text>
+        <rect x="394" y="68" width="22" height="22" fill="#f0ece4"/><text x="405" y="83" font-size="9" font-family="monospace" fill="#aaa" text-anchor="middle">.001</text>
+        <text x="378" y="108" font-family="monospace" font-size="9" fill="#c0392b" text-anchor="middle">"filtro muerto"</text>
+
+        <!-- KERNEL 4 — Diagonal edge -->
+        <text x="540" y="14" font-family="monospace" font-size="10" fill="#666" text-anchor="middle">Kernel δ</text>
+        <rect x="516" y="20" width="22" height="22" fill="#c0392b"/><text x="527" y="35" font-size="9" font-family="monospace" fill="white" text-anchor="middle">+1</text>
+        <rect x="540" y="20" width="22" height="22" fill="#e07060"/><text x="551" y="35" font-size="9" font-family="monospace" fill="white" text-anchor="middle">+.5</text>
+        <rect x="564" y="20" width="22" height="22" fill="#e8e0d0"/><text x="575" y="35" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">0</text>
+        <rect x="516" y="44" width="22" height="22" fill="#e07060"/><text x="527" y="59" font-size="9" font-family="monospace" fill="white" text-anchor="middle">+.5</text>
+        <rect x="540" y="44" width="22" height="22" fill="#e8e0d0"/><text x="551" y="59" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">0</text>
+        <rect x="564" y="44" width="22" height="22" fill="#6080b0"/><text x="575" y="59" font-size="9" font-family="monospace" fill="white" text-anchor="middle">-.5</text>
+        <rect x="516" y="68" width="22" height="22" fill="#e8e0d0"/><text x="527" y="83" font-size="9" font-family="monospace" fill="#333" text-anchor="middle">0</text>
+        <rect x="540" y="68" width="22" height="22" fill="#6080b0"/><text x="551" y="83" font-size="9" font-family="monospace" fill="white" text-anchor="middle">-.5</text>
+        <rect x="564" y="68" width="22" height="22" fill="#1a4a7a"/><text x="575" y="83" font-size="9" font-family="monospace" fill="white" text-anchor="middle">-1</text>
+        <text x="548" y="108" font-family="monospace" font-size="9" fill="#555" text-anchor="middle">"bordes diag."</text>
+      </svg>
+      <div class="fig-caption">Figura B.2 — Visualización de 4 de los 32 kernels 3×3 aprendidos en Conv 12. Rojo = peso positivo, Azul = peso negativo, Beige ≈ 0.</div>
+    </div>
+
+    <div class="subqs">
+      <div class="subq">
+        <div class="subq-label">B.2.a — 4 pts</div>
+        <p>Para cada uno de los cuatro kernels (α, β, γ, δ) de la Figura B.2: <strong>(1) describe qué característica visual detecta o por qué no detecta nada</strong>, y <strong>(2) calcula manualmente la convolución del kernel α sobre el siguiente parche 5×5 de imagen</strong> (muestra todos los pasos del cálculo para la posición central y al menos una posición adyacente, usando zero-padding):</p>
+        <div class="eq" style="text-align:left;padding:14px 20px;line-height:2.2;">
+          Parche P =&nbsp;
+          <span style="display:inline-block;vertical-align:middle;">
+            ⎡ 0 &nbsp; 0 &nbsp; 0 &nbsp; 0 &nbsp; 0 ⎤<br>
+            ⎢ 0 &nbsp; 0 &nbsp; 0 &nbsp; 0 &nbsp; 0 ⎥<br>
+            ⎢ 200 200 200 200 200 ⎥<br>
+            ⎢ 200 200 200 200 200 ⎥<br>
+            ⎣ 200 200 200 200 200 ⎦
+          </span>
+          &nbsp;&nbsp;&nbsp;(borde horizontal negro→blanco en fila 2)
+        </div>
+        <p style="margin-top:10px;">¿El resultado tiene sentido para lo que ese kernel detecta? Interpreta el signo y la magnitud de la respuesta.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">B.2.b — 3 pts</div>
+        <p>La tabla muestra que en Conv 28, <strong>55 de 96 filtros están "muertos"</strong> (activación ≈ 0 sobre cualquier entrada del dataset). Este es un síntoma de un problema específico de entrenamiento. <strong>Identifica cuál es, explica el mecanismo exacto por el que ocurre</strong> (¿qué pasa con el gradiente en esos filtros durante backpropagation?) y propón <strong>dos soluciones distintas</strong>, una de arquitectura y una de entrenamiento, que lo habrían prevenido.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">B.2.c — 3 pts</div>
+        <p>El <em>receptive field acumulado</em> de Conv 28 es 187×187 píxeles sobre la imagen original. La imagen de entrada es de 224×224 px. <strong>Explica qué significa que el receptive field sea casi del tamaño de la imagen completa</strong> en términos de qué "ve" cada neurona de esa capa. ¿Es esto favorable o desfavorable para detectar opacidades pulmonares localizadas? Justifica. Calcula además cuántos parámetros tiene una capa Conv 28 con 96 filtros de 3×3 sobre 64 canales de entrada, con bias.</p>
+        <div class="eq">Parámetros conv = (k × k × C_in + 1) × C_out</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!--   SECCIÓN C — CÓDIGO BAJO PRESIÓN  (24 pts)          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <span class="sd-label">Sección C — Código Situado</span>
+  <span class="sd-line"></span>
+  <span class="sd-pts">24 puntos</span>
+</div>
+
+<div class="q-block">
+  <div class="q-header">
+    <span class="q-num">C.1</span>
+    <span class="q-title">El pipeline que "funciona" pero miente</span>
+    <span class="q-pts">12 pts</span>
+    <div class="q-tags"><span class="tag tag-code">Código</span><span class="tag tag-reason">Razonamiento</span></div>
+  </div>
+  <div class="q-body">
+    <p>El siguiente pipeline fue enviado a producción. <strong>Reporta un accuracy de validación del 93.2%</strong> en el notebook del equipo. El cliente ya firmó el contrato basado en ese número. El dataset es de detección de retinopathy diabética (binario: Sí/No) con 9.200 imágenes (8.500 negativas, 700 positivas).</p>
+
+    <div class="code-block">
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.decomposition <span class="kw">import</span> PCA
+<span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score, StratifiedKFold
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">import</span> cv2, os
+
+<span class="cm"># ── Carga de imágenes y extracción de features ──────────────────</span>
+features, labels = [], []
+<span class="kw">for</span> img_path <span class="kw">in</span> all_image_paths:
+    img = cv2.<span class="fn">imread</span>(img_path, cv2.IMREAD_GRAYSCALE)
+    img = cv2.<span class="fn">resize</span>(img, (<span class="num">64</span>, <span class="num">64</span>))
+    features.<span class="fn">append</span>(img.<span class="fn">flatten</span>())
+    labels.<span class="fn">append</span>(<span class="fn">get_label</span>(img_path))
+
+X = np.<span class="fn">array</span>(features)
+y = np.<span class="fn">array</span>(labels)
+
+<span class="cm"># ── Paso 1: Normalización GLOBAL ─────────────────────────────────</span>
+scaler = StandardScaler()
+X_scaled = scaler.<span class="fn">fit_transform</span>(X)               <span class="err"># ← Bug A</span>
+
+<span class="cm"># ── Paso 2: PCA para reducción ───────────────────────────────────</span>
+pca = PCA(n_components=<span class="num">50</span>)
+X_pca = pca.<span class="fn">fit_transform</span>(X_scaled)              <span class="err"># ← Bug B</span>
+
+<span class="cm"># ── Paso 3: Validación cruzada ───────────────────────────────────</span>
+svm = SVC(kernel=<span class="str">'rbf'</span>, C=<span class="num">10</span>, gamma=<span class="str">'scale'</span>)
+cv = StratifiedKFold(n_splits=<span class="num">5</span>, shuffle=<span class="num">True</span>, random_state=<span class="num">42</span>)
+scores = <span class="fn">cross_val_score</span>(svm, X_pca, y, cv=cv, scoring=<span class="str">'accuracy'</span>)
+<span class="fn">print</span>(<span class="str">f"CV Accuracy: {scores.mean():.3f} ± {scores.std():.3f}"</span>)  <span class="err"># ← Bug C</span>
+
+<span class="cm"># ── Paso 4: Entrenamiento final ──────────────────────────────────</span>
+svm.<span class="fn">fit</span>(X_pca, y)
+y_pred = svm.<span class="fn">predict</span>(X_pca)
+<span class="fn">print</span>(<span class="str">f"Final accuracy: {accuracy_score(y, y_pred):.3f}"</span>)          <span class="err"># ← Bug D</span>
+    </div>
+
+    <div class="subqs">
+      <div class="subq">
+        <div class="subq-label">C.1.a — 6 pts</div>
+        <p>Hay <strong>cuatro bugs marcados (A, B, C, D)</strong>. Para cada uno: (1) describe exactamente qué hace mal el código en esa línea, (2) explica la consecuencia cuantitativa o estadística del error (no solo "causa data leakage" — explica <em>por qué</em> infla o deflacta la métrica en este caso), y (3) escribe la versión corregida de esa línea o bloque. El Bug C es el más sutil: piénsalo cuidadosamente.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">C.1.b — 6 pts</div>
+        <p>El accuracy de 93.2% es técnicamente alcanzable en este dataset sin aprender nada. <strong>Demuéstralo:</strong> calcula qué accuracy obtendría un clasificador que siempre predice la clase mayoritaria, dado el desbalance del dataset (8.500 neg / 700 pos). Luego reescribe el pipeline completo correcto usando <code>sklearn.pipeline.Pipeline</code> con todos los pasos encadenados correctamente, y añade al menos dos métricas adicionales a accuracy que sean apropiadas para este problema médico. El código debe ser ejecutable.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="q-block">
+  <div class="q-header">
+    <span class="q-num">C.2</span>
+    <span class="q-title">Implementar Grad-CAM simplificado para explicabilidad</span>
+    <span class="q-pts">12 pts</span>
+    <div class="q-tags"><span class="tag tag-code">Código</span><span class="tag tag-diag">Diagnóstico</span></div>
+  </div>
+  <div class="q-body">
+    <div class="scenario">
+      <span class="sc-label">🔍 Contexto</span>
+      El hospital de la Sección A exige que el modelo sea <em>explicable</em>: los radiólogos deben ver qué región de la radiografía activó la predicción. Grad-CAM (Gradient-weighted Class Activation Mapping) es la técnica estándar para esto en CNNs. A continuación se provee el esqueleto de una implementación simplificada con TensorFlow/Keras.
+    </div>
+
+    <div class="code-block">
+<span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="kw">def</span> <span class="fn">compute_gradcam</span>(model, img_array, class_idx, last_conv_layer_name):
+    <span class="str">"""
+    Calcula el mapa de activación Grad-CAM para una imagen.
+    Args:
+        model            : modelo Keras entrenado
+        img_array        : array (1, H, W, C) preprocesado
+        class_idx        : índice de la clase objetivo (int)
+        last_conv_layer_name : nombre de la última capa convolucional (str)
+    Returns:
+        heatmap          : array 2D normalizado [0,1] del tamaño de la última conv map
+    """</span>
+    <span class="cm"># Paso 1: Crear submodelo que devuelva activaciones + predicción final</span>
+    grad_model = tf.keras.models.<span class="fn">Model</span>(
+        inputs=model.input,
+        outputs=[
+            model.<span class="fn">get_layer</span>(last_conv_layer_name).output,  <span class="cm"># activaciones conv</span>
+            model.output                                       <span class="cm"># logits finales</span>
+        ]
+    )
+
+    <span class="cm"># Paso 2: Forward pass dentro de GradientTape</span>
+    <span class="kw">with</span> tf.GradientTape() <span class="kw">as</span> tape:
+        conv_outputs, predictions = ___  <span class="cm"># ← Completa: llama a grad_model</span>
+        loss = predictions[:, ___]       <span class="cm"># ← Completa: selecciona la clase correcta</span>
+
+    <span class="cm"># Paso 3: Gradientes de la pérdida respecto a las activaciones conv</span>
+    grads = tape.<span class="fn">gradient</span>(loss, ___)   <span class="cm"># ← Completa: ¿gradiente respecto a qué?</span>
+
+    <span class="cm"># Paso 4: Pooling global de los gradientes (importancia por canal)</span>
+    pooled_grads = tf.reduce_mean(grads, axis=___)  <span class="cm"># ← Completa: ¿qué ejes?</span>
+
+    <span class="cm"># Paso 5: Ponderar canales de la última activación conv</span>
+    conv_outputs = conv_outputs[<span class="num">0</span>]  <span class="cm"># quitar dimensión batch</span>
+    heatmap = conv_outputs @ pooled_grads[..., tf.newaxis]
+    heatmap = tf.squeeze(heatmap)
+
+    <span class="cm"># Paso 6: ReLU y normalización</span>
+    heatmap = tf.<span class="fn">maximum</span>(heatmap, <span class="num">0</span>) / (tf.<span class="fn">math.reduce_max</span>(heatmap) + <span class="num">1e-8</span>)
+    <span class="kw">return</span> heatmap.<span class="fn">numpy</span>()
+
+
+<span class="kw">def</span> <span class="fn">overlay_heatmap</span>(heatmap, original_img, alpha=<span class="num">0.4</span>):
+    <span class="str">"""Superpone el heatmap sobre la imagen original."""</span>
+    <span class="kw">import</span> cv2
+    heatmap_resized = cv2.<span class="fn">resize</span>(heatmap, (original_img.shape[<span class="num">1</span>], original_img.shape[<span class="num">0</span>]))
+    heatmap_color   = cv2.<span class="fn">applyColorMap</span>(
+        np.<span class="fn">uint8</span>(<span class="num">255</span> * heatmap_resized), cv2.COLORMAP_JET
+    )
+    <span class="kw">return</span> cv2.<span class="fn">addWeighted</span>(original_img, <span class="num">1</span>-alpha, heatmap_color, alpha, <span class="num">0</span>)
+    </div>
+
+    <div class="subqs">
+      <div class="subq">
+        <div class="subq-label">C.2.a — 6 pts</div>
+        <p>Completa los cuatro espacios <code>___</code> marcados en el código. Para cada uno, escribe el código correcto <strong>y explica en una oración por qué esa es la opción correcta</strong> desde el punto de vista matemático de Grad-CAM. En particular, justifica por qué se hace un <em>global average pooling</em> de los gradientes y no simplemente se toman los gradientes crudos.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">C.2.b — 4 pts</div>
+        <p>El Paso 6 aplica ReLU antes de normalizar. <strong>¿Por qué es matemáticamente necesario ese ReLU?</strong> ¿Qué ocurriría si lo elimináramos: el heatmap resultante sería más informativo o menos? Responde con precisión conceptual.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">C.2.c — 2 pts</div>
+        <p>El radiólogo observa el heatmap superpuesto y la región activada corresponde a la esquina inferior izquierda de la imagen, donde está impresa la etiqueta del hospital (texto). <strong>¿Qué problema fundamental indica esto sobre el modelo? ¿Cómo se llama este fenómeno en ML?</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!--   SECCIÓN D — GRÁFICA A MANO  (16 pts)               -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <span class="sd-label">Sección D — Síntesis Visual (a mano)</span>
+  <span class="sd-line"></span>
+  <span class="sd-pts">16 puntos</span>
+</div>
+
+<div class="q-block">
+  <div class="q-header">
+    <span class="q-num">D.1</span>
+    <span class="q-title">Dibujar y razonar — CNN completa para el problema médico</span>
+    <span class="q-pts">10 pts</span>
+    <div class="q-tags"><span class="tag tag-draw">A Mano</span><span class="tag tag-design">Diseño</span></div>
+  </div>
+  <div class="q-body">
+    <p>En papel, <strong>dibuja a mano el diagrama completo de la arquitectura CNN</strong> que propondrías para el clasificador de neumonía de la Sección A, incorporando todas tus correcciones y propuestas de mejora.</p>
+
+    <div class="draw-box">
+      <div class="draw-icon">✏️</div>
+      <div class="draw-label">Tarea en papel — fotografiar y adjuntar en el notebook</div>
+      <div class="draw-sub">El diagrama debe incluir: dimensiones de los feature maps en cada capa, nombres de las operaciones (Conv, BN, ReLU, MaxPool, etc.), indicación de qué capas están congeladas (freeze) y cuáles se entrenan, la capa de clasificación final con número de neuronas y función de activación, y al menos una técnica anti-overfitting ubicada donde corresponde.</div>
+    </div>
+
+    <div class="subqs">
+      <div class="subq">
+        <div class="subq-label">D.1.a — 6 pts</div>
+        <p>El diagrama debe ser legible y completo. Califica así: <em>(2 pts)</em> dimensiones correctas en al menos 4 capas, <em>(2 pts)</em> indicación de capas congeladas vs. entrenables, <em>(2 pts)</em> técnica anti-overfitting correctamente ubicada y nombrada. Debajo del diagrama, anota con flechas el <strong>número total de parámetros entrenables</strong> (aproximado) y cómo lo calculaste.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">D.1.b — 4 pts</div>
+        <p>Junto al diagrama, escribe a mano <strong>la fórmula del output size de una capa convolucional</strong> y úsala para verificar al menos dos transiciones de dimensión en tu arquitectura.</p>
+        <div class="eq">Output size = ⌊(Input + 2×Padding − Kernel) / Stride⌋ + 1</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="q-block">
+  <div class="q-header">
+    <span class="q-num">D.2</span>
+    <span class="q-title">Dibujar — Curva ROC y zona de operación</span>
+    <span class="q-pts">6 pts</span>
+    <div class="q-tags"><span class="tag tag-draw">A Mano</span><span class="tag tag-reason">Razonamiento</span></div>
+  </div>
+  <div class="q-body">
+    <p>Con los datos de la Sección A (clasificador de neumonía, 3 clases, métricas dadas), realiza la siguiente tarea en papel:</p>
+
+    <div class="draw-box">
+      <div class="draw-icon">📊</div>
+      <div class="draw-label">Tarea en papel — fotografiar y adjuntar en el notebook</div>
+      <div class="draw-sub">Dibuja un sistema de ejes FPR (eje X) vs TPR (eje Y) para la clase "Neumonía Viral" en un esquema One-vs-Rest. Ubica el punto de operación actual del modelo usando las métricas de la Tabla A.3. Dibuja la curva ROC aproximada (no necesita ser exacta, pero debe ser coherente con las métricas). Marca la línea de un clasificador aleatorio. Señala la zona donde el modelo debería operar para el contexto médico.</div>
+    </div>
+
+    <div class="subqs">
+      <div class="subq">
+        <div class="subq-label">D.2.a — 6 pts</div>
+        <p>Calcula el punto de operación actual: <strong>¿cuál es el FPR y el TPR para la clase Viral</strong> usando los números de la matriz de confusión? Muestra el cálculo. Justifica a qué zona del espacio ROC debería moverse el modelo y cómo se lograría (¿cambiando el threshold o cambiando el modelo?).</p>
+        <div class="eq">TPR = Recall = TP / (TP + FN) &nbsp;&nbsp;|&nbsp;&nbsp; FPR = FP / (FP + TN)</div>
+        <p style="margin-top:10px;font-size:13px;color:var(--ink3)"><em>Nota: para calcular FP y TN de la clase Viral, interpreta la matriz de confusión de Figura A.3 con cuidado: cada columna y fila corresponde a una clase.</em></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!--   SECCIÓN E — POSICIÓN ARGUMENTADA  (18 pts)         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <span class="sd-label">Sección E — Posición Argumentada y Síntesis</span>
+  <span class="sd-line"></span>
+  <span class="sd-pts">18 puntos</span>
+</div>
+
+<div class="q-block">
+  <div class="q-header">
+    <span class="q-num">E.1</span>
+    <span class="q-title">El debate del equipo — ¿CNN desde cero o Transfer Learning?</span>
+    <span class="q-pts">9 pts</span>
+    <div class="q-tags"><span class="tag tag-reason">Razonamiento</span><span class="tag tag-design">Diseño</span></div>
+  </div>
+  <div class="q-body">
+    <div class="scenario">
+      <span class="sc-label">🗣️ El debate</span>
+      El equipo del hospital tiene dos posiciones enfrentadas. <strong>Ingeniero A</strong> dice: "Debemos usar Transfer Learning con ResNet50 pre-entrenado en ImageNet. Con solo 4.800 radiografías no tenemos suficientes datos para entrenar desde cero." <strong>Ingeniero B</strong> responde: "Eso es un error conceptual. Las radiografías médicas son blanco y negro, de alta resolución, con características completamente distintas a ImageNet. El transfer learning transfiere features de objetos naturales (perros, coches, flores) que no tienen ninguna relación con patrones de tejido pulmonar. Entrenar desde cero con augmentation agresiva es más honesto."
+    </div>
+
+    <div class="subqs">
+      <div class="subq">
+        <div class="subq-label">E.1.a — 4 pts</div>
+        <p>Ambos ingenieros tienen argumentos parcialmente válidos y parcialmente incorrectos. <strong>Identifica el error conceptual específico en el argumento de cada uno</strong> y corrígelo con precisión técnica. No es válido decir simplemente "ambos tienen razón": debes señalar exactamente qué afirmación de cada ingeniero es técnicamente incorrecta o incompleta.</p>
+      </div>
+      <div class="subq">
+        <div class="subq-label">E.1.b — 5 pts</div>
+        <p><strong>Toma una posición fundamentada</strong>: ¿cuál estrategia recomendarías para este caso específico (4.800 imágenes, 3 clases, contexto clínico, equipo sin GPU dedicada)? Tu argumento debe citar evidencia de la literatura o principios técnicos concretos, <strong>no opiniones</strong>. Menciona además qué harías con las imágenes en escala de grises respecto al modelo pre-entrenado (que espera RGB) y cómo resolverías ese problema técnicamente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="q-block">
+  <div class="q-header">
+    <span class="q-num">E.2</span>
+    <span class="q-title">Síntesis final — Carta técnica al director del hospital</span>
+    <span class="q-pts">9 pts</span>
+    <div class="q-tags"><span class="tag tag-reason">Razonamiento</span></div>
+  </div>
+  <div class="q-body">
+    <p>El director del hospital (no técnico) debe decidir si implementar el modelo de la Sección A en producción para triaje de emergencias. Él te pregunta directamente: <em>"¿El modelo está listo? ¿Podemos usarlo para tomar decisiones clínicas?"</em></p>
+
+    <div class="subqs">
+      <div class="subq">
+        <div class="subq-label">E.2.a — 9 pts</div>
+        <p>Escribe en tu notebook una respuesta de <strong>entre 300 y 450 palabras</strong> (cuenta las palabras) dirigida al director del hospital. Las condiciones:</p>
+        <ul style="margin-top:10px;padding-left:20px;font-size:14px;line-height:2;">
+          <li>Debes ser <strong>honesto</strong> sobre las limitaciones del modelo usando los números reales de la Sección A.</li>
+          <li>Debes explicar al menos <strong>dos métricas clave</strong> en lenguaje no técnico (sin usar palabras como "recall", "F1" o "precision" — tradúcelas a términos clínicos).</li>
+          <li>Debes dar una <strong>recomendación clara</strong> (sí/no/con condiciones) con justificación.</li>
+          <li>Debes proponer <strong>al menos una salvaguarda operativa</strong> concreta si el modelo se implementara (no una mejora técnica, sino un proceso humano o protocolo).</li>
+          <li><span class="hl-red">Respuestas genéricas, filosóficas o sin referencia a los números del parcial no recibirán puntaje.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!--   TABLA DE PUNTAJE                                    -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <span class="sd-label">Resumen de Puntaje</span>
+  <span class="sd-line"></span>
+  <span class="sd-pts">100 pts total</span>
+</div>
+
+<table class="metrics-table" style="max-width:540px;">
+  <tr><th>Sección</th><th>Tema</th><th>Puntos</th></tr>
+  <tr><td>A — A.1</td><td>Diagnóstico CNN médica (curvas + conf. matrix)</td><td>20</td></tr>
+  <tr><td>B — B.1</td><td>Pipeline anti-fraude con restricciones reales</td><td>12</td></tr>
+  <tr><td>B — B.2</td><td>Kernels CNN, filtros muertos, receptive field y cálculo manual</td><td>10</td></tr>
+  <tr><td>C — C.1</td><td>Pipeline que miente — debugging profundo</td><td>12</td></tr>
+  <tr><td>C — C.2</td><td>Grad-CAM implementación + explicabilidad</td><td>12</td></tr>
+  <tr><td>D — D.1</td><td>Arquitectura CNN a mano + fórmulas</td><td>10</td></tr>
+  <tr><td>D — D.2</td><td>Curva ROC a mano + punto de operación</td><td>6</td></tr>
+  <tr><td>E — E.1</td><td>Debate transfer learning — posición argumentada</td><td>9</td></tr>
+  <tr><td>E — E.2</td><td>Carta técnica al director del hospital</td><td>9</td></tr>
+  <tr style="border-top:2px solid var(--ink);"><td colspan="2"><strong>TOTAL</strong></td><td><strong>100</strong></td></tr>
+</table>
+
+<p style="margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--ink3);">
+  Escala: 100–88 → 5.0 · 87–75 → 4.0–4.9 · 74–60 → 3.0–3.9 · &lt;60 → reprobado<br>
+  Penalización tardía: −1.0 pt por minuto después de las 10:00 AM del 29 de abril de 2026.
+</p>
+
+
+<!-- FOOTER -->
+<div class="exam-footer">
+  <div>
+    <div style="font-weight:600;color:var(--ink);">Parcial 03 — Inteligencia Artificial · EAFIT 2026</div>
+    <div>Jorge Iván Padilla Buriticá · jipadillab@eafit.edu.co</div>
+  </div>
+  <div style="text-align:right;">
+    <div>Entrega: <strong>29 abr 2026 · 11:30 AM</strong></div>
+    <div>Formato: <strong>.ipynb</strong> adjunto por integrante</div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- TIMER SCRIPT (2h 30min) -->
+<script>
+  const TOTAL = 2.5 * 3600; // 2h30m in seconds
+  let rem = TOTAL;
+  const fill = document.getElementById('timer-fill');
+  const disp = document.getElementById('timer-display');
+  const wdg  = document.getElementById('timer-widget');
+
+  function fmt(s) {
+    const h  = Math.floor(s / 3600);
+    const m  = Math.floor((s % 3600) / 60);
+    const sc = s % 60;
+    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sc.toString().padStart(2,'0')}`;
+  }
+
+  const tick = setInterval(() => {
+    if (--rem < 0) { clearInterval(tick); disp.textContent = '00:00:00'; return; }
+    disp.textContent = fmt(rem);
+    fill.style.width = (rem / TOTAL * 100) + '%';
+    if      (rem <= 900)  wdg.className = 'timer-widget danger';
+    else if (rem <= 1800) wdg.className = 'timer-widget warn';
+    else                  wdg.className = 'timer-widget';
+  }, 1000);
+</script>
+</body>
+</html>
